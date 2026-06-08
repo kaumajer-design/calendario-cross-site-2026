@@ -536,7 +536,9 @@ function CampaignDetail({ item, site, onClose }) {
               Contexto
             </div>
             <div className="cdetail__sectbody">
-              {fallback(item.context)}
+              {item.context
+                ? <span>{item.context}</span>
+                : (!item.briefingUrl && fallback(null))}
             </div>
           </section>
 
@@ -549,7 +551,11 @@ function CampaignDetail({ item, site, onClose }) {
               {item.target && (
                 <span className="cdetail__targetchip">Target {item.target.replace(/^T/, "")}</span>
               )}
-              {fallback(item.targetDesc)}
+              {item.targetUrl ? (
+                <a href={item.targetUrl}
+                   onClick={(e)=>{e.preventDefault();try{(window.top||window).open(item.targetUrl,'_blank','noopener,noreferrer');}catch(x){window.open(item.targetUrl,'_blank');}}}
+                   className="cdetail__link">Ver base ↗</a>
+              ) : fallback(item.targetDesc)}
             </div>
           </section>
 
@@ -562,9 +568,12 @@ function CampaignDetail({ item, site, onClose }) {
               {item.note && (
                 <div className="cdetail__alert">⚠ {item.note}</div>
               )}
-              {fallback(item.briefing)}
+              {item.briefing
+                ? <span>{item.briefing}</span>
+                : (!item.briefingUrl && fallback(null))}
               {item.briefingUrl && (
-                <a href={item.briefingUrl} target="_blank" rel="noreferrer"
+                <a href={item.briefingUrl}
+                   onClick={(e)=>{e.preventDefault();try{(window.top||window).open(item.briefingUrl,'_blank','noopener,noreferrer');}catch(x){window.open(item.briefingUrl,'_blank');}}}
                    className="cdetail__link">Abrir briefing ↗</a>
               )}
             </div>
