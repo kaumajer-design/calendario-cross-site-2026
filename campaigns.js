@@ -15,7 +15,7 @@ window.SITES = {
       full:   "Matheus Gonçalves",
       coleta: "Raquel Ribeiro",
       me1:    "Carolina Hemman",
-      xd:     "Carolina Hemman",
+      xd:     "Raquel Ribeiro",
     },
   },
   MLA: {
