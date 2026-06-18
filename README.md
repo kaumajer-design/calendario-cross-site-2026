@@ -1,59 +1,94 @@
 # Calendário Cross Site 2026 — MLB · MLA · MCO · MLC
 
-Link no Grid: https://grid.adminml.com/d/01KSNJW00EX0DDZME6W6H58T8F/view
+Calendário editorial compartilhado entre Brasil, Argentina, Colômbia e Chile.
 
-## Arquivos
+🔗 **Link do calendário:** https://grid.adminml.com/d/01KSNJW00EX0DDZME6W6H58T8F/view
+
+---
+
+## Configuração inicial (fazer uma vez)
+
+### 1. Instalar o Claude Code
+Baixe e instale o app: **https://claude.ai/download**
+
+### 2. Instalar o GitHub Desktop (opcional, mais fácil)
+Baixe em: **https://desktop.github.com**  
+É um app visual para gerenciar o repositório sem usar terminal.
+
+### 3. Clonar o repositório
+
+**Opção A — GitHub Desktop (recomendado para não-técnicos):**
+1. Abra o GitHub Desktop
+2. Clique em **File → Clone repository...**
+3. Cole a URL: `https://github.com/kaumajer-design/calendario-cross-site-2026`
+4. Escolha onde salvar (ex: `Documentos\calendario-cross-site-2026`)
+5. Clique em **Clone**
+
+**Opção B — Terminal:**
+```
+git clone https://github.com/kaumajer-design/calendario-cross-site-2026
+```
+
+### 4. Abrir no Claude Code
+1. Abra o Claude Code
+2. Clique em **File → Open Folder**
+3. Selecione a pasta `calendario-cross-site-2026` que você acabou de clonar
+
+Pronto — o Claude vai ler o contexto do projeto automaticamente e estará pronto para ajudar.
+
+### 5. Instalar os plugins MCP
+No Claude Code, vá em **Extensões** e instale:
+- **Google Calendar** — para sincronizar briefings automaticamente
+- **Google Drive** — para acessar a pasta de briefings
+
+---
+
+## Uso diário — como pedir mudanças ao Claude
+
+Com a pasta aberta no Claude Code, basta escrever em português o que precisa.
+
+**Adicionar campanha:**
+> *"adiciona no MLB julho, semana 2: Refuerzo DDP Full, canal EMAIL, tipo full, dia 07/07"*
+
+**Corrigir data:**
+> *"muda a campanha Newsletter de MLB junho para o dia 04/06"*
+
+**Adicionar briefing:**
+> *"adiciona o briefingUrl para a campanha Hunting Item de MLB junho: https://docs.google.com/..."*
+
+**Publicar no Grid:**
+> *"sobe a versão atual pro Grid"*
+
+**Sincronizar briefings do Google Calendar:**
+> *"sincroniza os briefings do Google Calendar de julho"*
+
+**Atualizar mês completo via CSV:**
+> *"roda o sync de julho com o arquivo Downloads\campanhas-julho.csv"*
+
+---
+
+## Fluxo mensal completo
+
+1. Exporte o CSV da aba `campanhas-mês` do Sheets
+2. Salve em `Downloads\`
+3. Abra o Claude Code nesta pasta e diga:
+   > *"atualiza o calendário com o CSV de agosto que está em Downloads"*
+4. Claude gera os dados, atualiza `campaigns.js` e publica no Grid
+
+---
+
+## Arquivos do projeto
 
 | Arquivo | O que é |
 |---------|---------|
-| `campaigns.js` | Dados das campanhas (datas, canais, responsáveis, briefingUrls) — **editar aqui** |
-| `calendar.jsx` | Componente React (layout visual) |
-| `sync-briefings.ps1` | Legado — sincronização via GAS (requer OAuth corporativo, não recomendado) |
-| `briefings-gcal-script.gs` | Google Apps Script legado (já implantado, mas não utilizado no fluxo atual) |
+| `campaigns.js` | Dados de todas as campanhas — **o principal arquivo** |
+| `calendar.jsx` | Layout visual do calendário (raramente muda) |
+| `rebuild-and-upload.ps1` | Script que publica no Grid |
+| `sync-from-csv.ps1` | Script que converte CSV em dados do calendário |
+| `CLAUDE.md` | Instruções técnicas para o Claude (não editar) |
 
-## Para adicionar campanhas (ex: Julho)
+---
 
-**Via Claude Code (recomendado):**
-1. Abra esta pasta no Claude Code
-2. Diga: *"adiciona as campanhas de julho para MLB: [lista de campanhas]"*
-3. Claude edita o `campaigns.js`, exporta o HTML e sobe para o Grid
+## Dúvidas?
 
-## Para vincular briefings
-
-Os briefing links ficam no campo `briefingUrl` de cada campanha em `campaigns.js`
-e aparecem no painel de detalhe ao clicar na campanha no calendário.
-
-### Opção A — Via pasta do Google Drive (recomendado)
-
-1. Crie o doc de briefing no Google Docs
-2. Mova-o para a pasta compartilhada:  
-   `https://drive.google.com/drive/folders/17ZSK1ev1UXnpaRjHvdpXA_ChaF88HfaG`
-3. No Claude Code, diga:  
-   *"sincroniza os briefings da pasta do Drive"*
-4. Claude lê a pasta, cruza os nomes com as campanhas em `campaigns.js`,
-   atualiza o HTML e sobe para o Grid automaticamente
-
-### Opção B — Diretamente pelo Claude Code
-
-Se o link já estiver disponível, basta pedir:
-
-> *"adiciona briefingUrl para [Nome da Campanha]: https://docs.google.com/..."*
-
-Claude atualiza `campaigns.js` e sobe para o Grid.
-
-### Opção C — Edição manual em `campaigns.js`
-
-Adicione o campo `briefingUrl` ao objeto da campanha:
-
-```js
-{ col: 2, span: 1, ch: "EMAIL", name: "Nome da Campanha",
-  briefingUrl: "https://docs.google.com/document/d/ID/edit" }
-```
-
-Depois peça ao Claude para subir ao Grid, ou exporte o HTML manualmente.
-
-## Para editar no Claude Code
-
-1. Instale o Claude Code: https://claude.ai/code
-2. Abra esta pasta: `File > Open Folder`
-3. Descreva a mudança em português e Claude implementa
+Abra o Claude Code com esta pasta e pergunte — ele tem todo o contexto do projeto.
