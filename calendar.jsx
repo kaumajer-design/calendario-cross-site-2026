@@ -480,7 +480,7 @@ function Header({ site, month, stats,
 
         {stats.wishlist > 0 && (
           <div className="filterset">
-            <div className="filterset__label">Tipo de ítem</div>
+            <div className="filterset__label">Tipo de comunicação</div>
             <div className="filterset__chips">
               <button className={"fchip fchip--all" + (wishlistFilter === "all" ? " is-active" : "")}
                       onClick={() => setWishlistFilter("all")}>Todos</button>
