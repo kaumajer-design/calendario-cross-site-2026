@@ -344,6 +344,7 @@ const MLB_JUL_2026 = makeMonth("Julio 2026", W_JUL, [
   ],
   /* Semana 4 — 20/07 a 24/07 */
   [
+    { col: 2, span: 1, ch: "EMAIL", types: ["flex"], name: "Activar Flex Sábados" }, // 21/07
     { col: 4, span: 1, ch: "WPP",   types: ["full","flex"], name: "8.8 DDP" }, // 23/07
   ],
   /* Semana 5 — 27/07 a 31/07 */
