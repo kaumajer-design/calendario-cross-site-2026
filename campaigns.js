@@ -27,7 +27,7 @@ window.SITES = {
       flex:   "Eloy Segre",
       full:   "Florencia Campos",
       coleta: "Florencia Haefeli",
-      xd:     "Eloy Segre",
+      xd:     "Florencia Haefeli",
     },
   },
   MCO: {
@@ -39,6 +39,7 @@ window.SITES = {
       flex:   "Juliana Carvajal",
       full:   "Karen Polanco",
       coleta: "Florencia Haefeli",
+      xd:     "Florencia Haefeli",
     },
   },
   MLC: {
@@ -47,7 +48,7 @@ window.SITES = {
     flag: "🇨🇱",
     flagColors: { top: "#FFFFFF", mid: "#0039A6", text: "#D52B1E" },
     owners: {
-      // MLC uses ad-hoc owners already encoded in items (Sebas, Diego, Dani, Génesis, Cato)
+      xd: "Daniella Rebolledo",
     },
   },
 };
