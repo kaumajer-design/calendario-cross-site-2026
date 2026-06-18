@@ -325,19 +325,20 @@ const MONTHS_ALL = ["Mayo 2026", "Junio 2026", "Julio 2026", "Agosto 2026"];
 const MLB_JUL_2026 = makeMonth("Julio 2026", W_JUL, [
   /* Semana 1 — 29/06 a 03/07 */
   [
-    { col: 3, span: 1, ch: "EMAIL", types: ["full","flex","coleta"], name: "Newsletter Full, Flex e Coleta" }, // 01/07
-    { col: 3, span: 3, ch: "CDN",   types: ["full","flex"], name: "Refuerzo Copa do Mundo" }, // 01/07–03/07
+    { col: 4, span: 1, ch: "CDN",   types: ["full","flex"], name: "Refuerzo Copa do Mundo" }, // 02/07
+    { col: 5, span: 1, ch: "EMAIL", types: ["full","flex","coleta"], name: "Newsletter Full, Flex e Coleta" }, // 03/07
+    { col: 5, span: 1, ch: "EMAIL", types: ["full"], name: "Bc Benefícios Inbound Finais de Semana Sabado" }, // 03/07
   ],
   /* Semana 2 — 06/07 a 10/07 */
   [
     { col: 1, span: 1, ch: "EMAIL", types: ["full"], name: "8.8 DDP" }, // 06/07
     { col: 1, span: 1, ch: "WPP",   types: ["flex"], name: "Revisión de Férias VP&A" }, // 06/07
-    { col: 3, span: 1, ch: "EMAIL", types: ["flex"], name: "Férias Coisas de Crianca (T&B)" }, // 08/07
     { col: 4, span: 1, holiday: true, name: "Feriado São Paulo Revolución Constitucionalista" }, // 09/07
     { col: 4, span: 1, holiday: true, name: "Partido Mundial (a definir)" }, // 09/07
   ],
   /* Semana 3 — 13/07 a 17/07 */
   [
+    { col: 1, span: 1, ch: "EMAIL", types: ["flex"], name: "Férias Coisas de Crianca (T&B)" }, // 13/07
     { col: 2, span: 1, holiday: true, name: "Partido Mundial (a definir)" }, // 14/07
     { col: 4, span: 1, ch: "EMAIL", types: ["flex"], name: "Ativar Publicações Flex" }, // 16/07
     { col: 4, span: 1, ch: "WPP",   types: ["flex"], name: "Ativar Publicações Flex" }, // 16/07
