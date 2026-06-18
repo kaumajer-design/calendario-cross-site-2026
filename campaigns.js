@@ -327,7 +327,7 @@ const MLB_JUL_2026 = makeMonth("Julio 2026", W_JUL, [
   [
     { col: 4, span: 1, ch: "CDN",   types: ["full","flex"], name: "Refuerzo Copa do Mundo" }, // 02/07
     { col: 5, span: 1, ch: "EMAIL", types: ["full","flex","coleta"], name: "Newsletter Full, Flex e Coleta" }, // 03/07
-    { col: 5, span: 1, ch: "EMAIL", types: ["full"], name: "Bc Benefícios Inbound Finais de Semana Sabado" }, // 03/07
+    { col: 5, span: 1, ch: "WPP",   types: ["full"], name: "Bc Benefícios Inbound Finais de Semana Domingo Target 2" }, // 03/07
   ],
   /* Semana 2 — 06/07 a 10/07 */
   [
