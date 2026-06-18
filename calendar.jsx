@@ -13,20 +13,16 @@ const CHANNELS = {
 
 /* ─── Type pills ─────────────────────────────────────────────── */
 const TYPES = {
-  full:   { label: "Full",   bg: "#00A650", fg: "#FFFFFF" },
-  flex:   { label: "Flex",   bg: "#FFE600", fg: "#1A1A1A" },
-  coleta: { label: "Coleta", bg: "#1A1A1A", fg: "#FFE600" },
+  full:   { label: "Full",    bg: "#00A650", fg: "#FFFFFF" },
+  flex:   { label: "Flex",    bg: "#FFE600", fg: "#1A1A1A" },
+  coleta: { label: "Coleta",  bg: "#1A1A1A", fg: "#FFE600" },
   xd:     { label: "XD/XDDO",bg: "#6B4FE0", fg: "#FFFFFF" },
-  me1:    { label: "ME1",    bg: "#9C27B0", fg: "#FFFFFF" },
+  me1:    { label: "ME1",     bg: "#9C27B0", fg: "#FFFFFF" },
 };
 
 /* Beneficio: campañas que empiezan con BC o POC */
 const isBeneficio = (item) => /^(BC|POC)\b/i.test(item.name || "");
 
-/* Owner resolver: depends on the site's owner table.
-   - MLC keeps its legacy in-item owner rules (Sebas/Diego/Dani/Génesis/Cato).
-   - Other sites: by type, look up the responsible from site.owners.
-*/
 const ownersOf = (item, site) => {
   if (item.owner) return Array.isArray(item.owner) ? item.owner : [item.owner];
   const n = item.name || "";
@@ -43,7 +39,6 @@ const ownersOf = (item, site) => {
   if (!site || !site.owners) return [];
   const out = [];
   const t = item.types || [];
-  // Stable order: full → flex → coleta → xd/me1
   if (t.includes("full")   && site.owners.full)   out.push(site.owners.full);
   if (t.includes("flex")   && site.owners.flex)   out.push(site.owners.flex);
   if (t.includes("coleta") && site.owners.coleta) out.push(site.owners.coleta);
@@ -52,12 +47,12 @@ const ownersOf = (item, site) => {
   return out;
 };
 
-/* short, friendly label for chip rows */
 const shortName = (full) => {
   if (!full) return "";
   const [a, b] = full.split(/\s+/);
   return b ? a + " " + b[0] + "." : a;
 };
+
 const initials = (full) => {
   if (!full) return "?";
   const parts = full.split(/\s+/).filter(Boolean);
@@ -82,6 +77,7 @@ function CampaignCard({ item, site, onOpen }) {
       </div>
     );
   }
+
   const chKeys = Array.isArray(item.chs) && item.chs.length > 0 ? item.chs : [item.ch];
   const channels = chKeys.map(k => CHANNELS[k] || CHANNELS.TBD);
   const primary = channels[0];
@@ -98,17 +94,25 @@ function CampaignCard({ item, site, onOpen }) {
       })()
     : primary.bg;
 
+  const cardStyle = {
+    gridColumn: `${item.col} / span ${item.span}`,
+    gridRow: item._row,
+    position: "relative",
+    background: bg,
+    color: primary.fg,
+  };
+  if (item.wishlist) {
+    cardStyle.opacity = 0.80;
+    cardStyle.outline = "2px dashed rgba(255,255,255,0.55)";
+    cardStyle.outlineOffset = "-3px";
+  }
+
   return (
     <button
       type="button"
       onClick={() => onOpen && onOpen(item)}
-      className={"campaign" + (chKeys[0] === "TBD" ? " is-tbd" : "") + (beneficio ? " is-beneficio" : "") + (multi ? " is-multi" : "")}
-      style={{
-        gridColumn: `${item.col} / span ${item.span}`,
-        gridRow: item._row,
-        background: bg,
-        color: primary.fg,
-      }}
+      className={"campaign" + (chKeys[0] === "TBD" ? " is-tbd" : "") + (beneficio ? " is-beneficio" : "") + (multi ? " is-multi" : "") + (item.wishlist ? " is-wishlist" : "")}
+      style={cardStyle}
       title={"Ver detalle — " + item.name}
     >
       <div className="campaign__head">
@@ -150,6 +154,16 @@ function CampaignCard({ item, site, onOpen }) {
           <span className="campaign__note">⚠ {item.note}</span>
         )}
       </div>
+      {item.wishlist && (
+        <span style={{
+          position: "absolute", bottom: 3, right: 4,
+          fontSize: "9px", fontWeight: 800,
+          background: "rgba(0,0,0,0.35)", color: "rgba(255,255,255,0.9)",
+          borderRadius: "3px", padding: "1px 5px",
+          letterSpacing: "0.6px", textTransform: "uppercase",
+          pointerEvents: "none",
+        }}>wishlist</span>
+      )}
     </button>
   );
 }
@@ -171,13 +185,15 @@ function packLanes(items) {
 }
 
 /* ─── Week block ─────────────────────────────────────────────── */
-function Week({ week, site, channelFilters, typeFilters, beneficiosOnly, responsableFilters, onOpen }) {
+function Week({ week, site, channelFilters, typeFilters, beneficiosOnly, responsableFilters, wishlistFilter, onOpen }) {
   const visible = useMemo(() => {
     const hasCh   = channelFilters.size > 0;
     const hasType = typeFilters.size > 0;
     const hasResp = responsableFilters.size > 0;
     return week.items.filter(it => {
       if (it.holiday) return true;
+      if (wishlistFilter === "calendario" && it.wishlist) return false;
+      if (wishlistFilter === "wishlist"   && !it.wishlist) return false;
       if (beneficiosOnly && !isBeneficio(it)) return false;
       if (hasCh) {
         const keys = Array.isArray(it.chs) && it.chs.length > 0 ? it.chs : [it.ch];
@@ -187,7 +203,7 @@ function Week({ week, site, channelFilters, typeFilters, beneficiosOnly, respons
       if (hasResp && !ownersOf(it, site).some(o => responsableFilters.has(o))) return false;
       return true;
     });
-  }, [week, site, channelFilters, typeFilters, beneficiosOnly, responsableFilters]);
+  }, [week, site, channelFilters, typeFilters, beneficiosOnly, responsableFilters, wishlistFilter]);
 
   const placed = useMemo(() => packLanes(visible), [visible]);
   const totalRows = Math.max(1, ...placed.map(p => p._row || 1));
@@ -266,6 +282,7 @@ function Flag({ code }) {
 /* ─── Site / Month switcher (top toolbar) ───────────────────── */
 function SiteSwitcher({ sites, site, setSite, months, month, setMonth }) {
   const [open, setOpen] = useState(false);
+
   return (
     <div className="siteswitcher">
       <div className="siteswitcher__group">
@@ -283,6 +300,7 @@ function SiteSwitcher({ sites, site, setSite, months, month, setMonth }) {
           ))}
         </div>
       </div>
+
       <div className="siteswitcher__group">
         <span className="siteswitcher__label">Mes</span>
         <div className={"monthselect" + (open ? " is-open" : "")}>
@@ -332,6 +350,7 @@ function Header({ site, month, stats,
                   typeFilters, toggleType, clearTypes,
                   beneficiosOnly, setBeneficiosOnly,
                   responsableFilters, toggleResponsable, clearResponsables,
+                  wishlistFilter, setWishlistFilter,
                   anyFilterActive, clearAllFilters }) {
   return (
     <header className="cal-header">
@@ -356,6 +375,7 @@ function Header({ site, month, stats,
             }</div>
           </div>
         </div>
+
         <div className="cal-header__meta">
           <div className="cal-header__metarow">
             <div className="meta__rowlabel">Total</div>
@@ -371,6 +391,13 @@ function Header({ site, month, stats,
               <>
                 <div className="meta__sep"></div>
                 <div className="meta__item"><span className="meta__n">{stats.beneficios}</span> <span style={{color:"#E8A100"}}>★</span> Beneficios</div>
+              </>
+            )}
+            {stats.wishlist > 0 && (
+              <>
+                <div className="meta__sep"></div>
+                <div className="meta__item"><span className="meta__n">{stats.total - stats.wishlist}</span> Calendario</div>
+                <div className="meta__item"><span className="meta__n">{stats.wishlist}</span> Wishlist</div>
               </>
             )}
           </div>
@@ -425,6 +452,7 @@ function Header({ site, month, stats,
             )}
           </div>
         </div>
+
         <div className="filterset">
           <div className="filterset__label">Responsable</div>
           <div className="filterset__chips">
@@ -449,6 +477,28 @@ function Header({ site, month, stats,
             )}
           </div>
         </div>
+
+        {stats.wishlist > 0 && (
+          <div className="filterset">
+            <div className="filterset__label">Tipo de ítem</div>
+            <div className="filterset__chips">
+              <button className={"fchip fchip--all" + (wishlistFilter === "all" ? " is-active" : "")}
+                      onClick={() => setWishlistFilter("all")}>Todos</button>
+              <button className={"fchip" + (wishlistFilter === "calendario" ? " is-active" : "")}
+                      onClick={() => setWishlistFilter(wishlistFilter === "calendario" ? "all" : "calendario")}>
+                <span className="fchip__sw" style={{background:"#00A650",color:"#fff"}}>C</span>
+                <span className="fchip__lbl">Calendario</span>
+                <span className="fchip__n">{stats.total - stats.wishlist}</span>
+              </button>
+              <button className={"fchip" + (wishlistFilter === "wishlist" ? " is-active" : "")}
+                      onClick={() => setWishlistFilter(wishlistFilter === "wishlist" ? "all" : "wishlist")}>
+                <span className="fchip__sw" style={{background:"#9E9E9E",color:"#fff"}}>W</span>
+                <span className="fchip__lbl">Wishlist</span>
+                <span className="fchip__n">{stats.wishlist}</span>
+              </button>
+            </div>
+          </div>
+        )}
       </div>
     </header>
   );
@@ -471,7 +521,6 @@ function CampaignDetail({ item, site, onClose }) {
   const owners = ownersOf(item, site);
   const beneficio = isBeneficio(item);
 
-  // Find the day(s) from col/span on a virtual 5-day week (LUN..VIE)
   const days = ["LUN","MAR","MIÉ","JUE","VIE"];
   const dayRange = (() => {
     if (!item.col) return null;
@@ -504,6 +553,13 @@ function CampaignDetail({ item, site, onClose }) {
                       style={{ color: channels[0].fg === "#1A1A1A" ? "#1A1A1A" : "#FFE600" }}>
                   ★ Beneficio
                 </span>
+              )}
+              {item.wishlist && (
+                <span style={{
+                  background: "rgba(0,0,0,0.25)", color: channels[0].fg === "#1A1A1A" ? "rgba(0,0,0,0.85)" : "rgba(255,255,255,0.95)",
+                  borderRadius: "4px", padding: "2px 8px",
+                  fontSize: "11px", fontWeight: 700, letterSpacing: "0.6px", textTransform: "uppercase",
+                }}>★ Wishlist</span>
               )}
             </div>
             <button className="cdetail__close" onClick={onClose}
@@ -611,16 +667,22 @@ function App() {
   const site = sitesAll[siteCode];
   const data = (dataAll.bySite[siteCode] || {})[month] || { weeks: [] };
 
-  // Reset filters when switching site to avoid stale responsable filters
   const [channelFilters, setChannelFilters]         = useState(() => new Set());
   const [typeFilters, setTypeFilters]               = useState(() => new Set());
   const [responsableFilters, setResponsableFilters] = useState(() => new Set());
   const [beneficiosOnly, setBeneficiosOnly]         = useState(false);
+  const [wishlistFilter, setWishlistFilter]         = useState("all");
   const [selectedItem, setSelectedItem]             = useState(null);
 
   const setSite = (code) => {
     setSiteCode(code);
-    setResponsableFilters(new Set()); // owners are site-specific
+    setResponsableFilters(new Set());
+    setWishlistFilter("all");
+  };
+
+  const setMonthAndReset = (m) => {
+    setMonth(m);
+    setWishlistFilter("all");
   };
 
   const toggleIn = (setter) => (val) => setter(prev => {
@@ -635,19 +697,23 @@ function App() {
   const clearChannels     = clearSet(setChannelFilters);
   const clearTypes        = clearSet(setTypeFilters);
   const clearResponsables = clearSet(setResponsableFilters);
-  const anyFilterActive = channelFilters.size > 0 || typeFilters.size > 0 || responsableFilters.size > 0 || beneficiosOnly;
+
+  const anyFilterActive = channelFilters.size > 0 || typeFilters.size > 0 || responsableFilters.size > 0 || beneficiosOnly || wishlistFilter !== "all";
+
   const clearAllFilters = () => {
-    setChannelFilters(new Set()); setTypeFilters(new Set()); setResponsableFilters(new Set()); setBeneficiosOnly(false);
+    setChannelFilters(new Set()); setTypeFilters(new Set()); setResponsableFilters(new Set());
+    setBeneficiosOnly(false); setWishlistFilter("all");
   };
 
   const stats = useMemo(() => {
-    const s = { total: 0, full: 0, flex: 0, coleta: 0, beneficios: 0,
+    const s = { total: 0, full: 0, flex: 0, coleta: 0, beneficios: 0, wishlist: 0,
                 byChannel: {}, byType: {}, byResponsable: {} };
     for (const w of data.weeks) {
       for (const it of w.items) {
         if (it.holiday) continue;
         s.total++;
         if (isBeneficio(it)) s.beneficios++;
+        if (it.wishlist) s.wishlist++;
         const owners = ownersOf(it, site);
         for (const owner of owners) {
           s.byResponsable[owner] = (s.byResponsable[owner] || 0) + 1;
@@ -658,8 +724,8 @@ function App() {
         }
         for (const t of (it.types || [])) {
           s.byType[t] = (s.byType[t] || 0) + 1;
-          if (t === "full") s.full++;
-          if (t === "flex") s.flex++;
+          if (t === "full")   s.full++;
+          if (t === "flex")   s.flex++;
           if (t === "coleta") s.coleta++;
         }
       }
@@ -673,13 +739,14 @@ function App() {
         sites={sitesAll}
         site={site} setSite={setSite}
         months={dataAll.months}
-        month={month} setMonth={setMonth} />
+        month={month} setMonth={setMonthAndReset} />
       <Header
         site={site} month={month} stats={stats}
         channelFilters={channelFilters} toggleChannel={toggleChannel} clearChannels={clearChannels}
         typeFilters={typeFilters} toggleType={toggleType} clearTypes={clearTypes}
         beneficiosOnly={beneficiosOnly} setBeneficiosOnly={setBeneficiosOnly}
         responsableFilters={responsableFilters} toggleResponsable={toggleResponsable} clearResponsables={clearResponsables}
+        wishlistFilter={wishlistFilter} setWishlistFilter={setWishlistFilter}
         anyFilterActive={anyFilterActive} clearAllFilters={clearAllFilters}
       />
       <main className="cal-body" key={siteCode + month}>
@@ -689,12 +756,13 @@ function App() {
                 typeFilters={typeFilters}
                 beneficiosOnly={beneficiosOnly}
                 responsableFilters={responsableFilters}
+                wishlistFilter={wishlistFilter}
                 onOpen={setSelectedItem} />
         ))}
       </main>
       <footer className="cal-foot">
         <span className="cal-foot__hint">
-          <strong>Canal = color</strong> · Tipo (Full / Flex / Coleta{site.owners?.xd ? " / XD" : ""}{site.owners?.me1 ? " / ME1" : ""}) en píldoras · 
+          <strong>Canal = color</strong> · Tipo (Full / Flex / Coleta{site.owners?.xd ? " / XD" : ""}{site.owners?.me1 ? " / ME1" : ""}) en píldoras ·
           <span className="cal-foot__star">★</span> Beneficios (BC / POC)
         </span>
         <span className="cal-foot__site">{site.code} · {site.name}</span>
