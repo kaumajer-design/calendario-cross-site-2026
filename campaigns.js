@@ -115,8 +115,6 @@ const MLB_JUN_2026 = makeMonth("Junio 2026", W_JUN, [
     { col: 4, span: 1, ch: "WPP", types: ["full"], name: "Items Forçados a Estrela", wishlist: true },
     { col: 4, span: 1, ch: "EMAIL", types: ["flex"], name: "Forçar Flex | Ativação Massiva de Itens", wishlist: true },
     { col: 4, span: 1, ch: "CDN", types: ["full"], name: "Items Forçados a Estrela", wishlist: true },
-    { col: 4, span: 1, ch: "EMAIL", types: ["flex"], name: "Ativar Publicações Flex" },
-    { col: 4, span: 1, ch: "WPP", types: ["flex"], name: "Ativar Publicações Flex" },
     { col: 5, span: 1, ch: "WPP", types: ["full"], name: "Bc Benefícios Inbound Finais de Semana Domingo Target 2", wishlist: true },
   ],
   /* Semana 3 */
@@ -133,6 +131,8 @@ const MLB_JUN_2026 = makeMonth("Junio 2026", W_JUN, [
   [
     { col: 1, span: 1, ch: "WPP", types: ["flex"], name: "Refuerzo 7.7 Foco Mundial Flex" },
     { col: 3, span: 1, ch: "WPP", types: ["full"], name: "Férias Multicategoria" },
+    { col: 4, span: 1, ch: "EMAIL", types: ["flex"], name: "Ativar Publicações Flex" }, // 25/06
+    { col: 4, span: 1, ch: "WPP", types: ["flex"], name: "Ativar Publicações Flex" }, // 25/06
     { col: 5, span: 1, ch: "WPP", types: ["full"], name: "Bc Benefícios Inbound Finais de Semana Domingo Target 2", wishlist: true },
   ],
   /* Semana 5 */
