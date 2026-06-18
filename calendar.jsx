@@ -31,7 +31,8 @@ const ownersOf = (item, site) => {
     if (/^POC\b/i.test(n)) return ["Diego Farcuh"];
     const out = [];
     const t = item.types || [];
-    if (t.includes("coleta")) out.push("Daniela Rebolledo");
+    if (t.includes("xd"))     out.push("Daniella Rebolledo");
+    if (t.includes("coleta")) out.push("Daniella Rebolledo");
     if (t.includes("full"))   out.push("Genesis Cayupi");
     if (t.includes("flex"))   out.push("Ricardo Bacarrezza");
     return out;
